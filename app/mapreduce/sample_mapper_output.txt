@@ -1,0 +1,6 @@
+hello	document1.txt
+world	document1.txt
+hello	document2.txt
+example	document1.txt
+test	document3.txt
+hello	document3.txt

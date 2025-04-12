@@ -22,10 +22,12 @@ hdfs dfsadmin -report
 # If namenode in safemode then leave it
 hdfs dfsadmin -safemode leave
 
+echo "Creating directories in HDFS"
 # create a directory for spark apps in HDFS
 hdfs dfs -mkdir -p /apps/spark/jars
 hdfs dfs -chmod 744 /apps/spark/jars
 
+echo "Copying jars to HDFS"
 
 # Copy all jars to HDFS
 hdfs dfs -put /usr/local/spark/jars/* /apps/spark/jars/
