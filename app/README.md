@@ -37,3 +37,10 @@ This script will be responsible for running the `query.py` PySpark app on Hadoop
 
 ### start-services.sh
 This script will initiate the services required to run Hadoop components. This script is called in `app.sh` file.
+
+
+### sample_mapper_input.txt
+File for testing the `mapper.py`.
+
+### sample_mapper_output.txt
+File for testing the `reducer.py`.

@@ -24,72 +24,36 @@ def create_doc(row):
 df.foreach(create_doc)
 
 
-# df.write.csv("/index/data", sep = "\t")
-## TO DO: change
-def extract_document_id(filename):
-    basename = os.path.basename(filename)
-    parts = basename.split('_', 1)
-    if len(parts) >= 1:
-        return parts[0]
-    else:
-        return "no"
-
-
-def process_document(file_path, file_content):
-    """Extract document ID, title and content from the file"""
-    doc_id = extract_document_id(file_path)
+# get document_id, docunent_title and document_content
+def process_document(path_to_file, document_content):
+    filename = os.path.basename(path_to_file)
+    document_id, document_title = filename.split('_', 1)   
     
-    # Simple title extraction - first non-empty line or filename
-    lines = file_content.strip().split('\n')
-    title = "Untitled"
-    
-    for line in lines:
-        if line.strip():
-            title = line.strip()
-            break
-    
-    # Use filename as fallback title
-    if title == "Untitled":
-        basename = os.path.basename(file_path)
-        if '_' in basename:
-            title = basename.split('_', 1)[1]
-            if title.endswith('.txt'):
-                title = title[:-4]  # Remove .txt extension
-    
-    # Content is everything
-    content = file_content.strip()
-    
-    return (doc_id, title, content)
+    return (document_id, document_title, document_content)
 
 sc = spark.sparkContext
-print("Starting document preparation for HDFS...")
+print("Process documents to put them into hdfs")
 
-# Read all text files from /data directory in HDFS
+# get text files from /data directory in HDFS
 input_path = "/data"
 print(f"Reading documents from {input_path}")
 
-# Use wholeTextFiles to get (filename, content) pairs
+#  get (filename, content) pairs
 documents_rdd = sc.wholeTextFiles(input_path)
 
-# Print count for debugging
-doc_count = documents_rdd.count()
-print(f"Found {doc_count} documents in HDFS")
 
-# Transform: extract id, title, content
+# from document filename and content create (document_id, document_title, document_content)
 processed_rdd = documents_rdd.map(lambda x: process_document(x[0], x[1]))
 
-# Convert to tab-separated format
+# make (document_id, document_title, document_content) separated with tabs
 formatted_rdd = processed_rdd.map(lambda x: f"{x[0]}\t{x[1]}\t{x[2]}")
 
-
-# Ensure output directory exists
 output_path = "/index/data"
-print(f"Writing processed documents to {output_path}")
+print(f"Putting documents into {output_path}")
 
-# Coalesce to one partition and save
+# merge files to one partition
 formatted_rdd.coalesce(1).saveAsTextFile(output_path)
 
-print("Document preparation completed successfully!")
+print("Documents are prepared!")
 spark.stop()
 
-## TO DO: change

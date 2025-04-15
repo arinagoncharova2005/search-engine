@@ -46,19 +46,4 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
     -input $INPUT_PATH \
     -output $OUTPUT_DIR
 
-
-# hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
-#   -files myenv.tar.gz,my_mapper.py,my_reducer.py \
-#   -mapper "bash -c 'tar -xzf myenv.tar.gz && source myenv/bin/activate && python my_mapper.py'" \
-#   -reducer "bash -c 'tar -xzf myenv.tar.gz && source myenv/bin/activate && python my_reducer.py'" \
-#   -input /path/to/input \
-#   -output /path/to/output
-
-# mapred streaming \
-#     -files mapreduce,.venv.tar.gz \
-#     -mapper mapreduce/mapper1.py \
-#     -reducer mapreduce/reducer1.py \
-#     -input $INPUT_PATH \
-#     -output $OUTPUT_DIR
-
 echo 'Mapreduce job was finished successfully!'

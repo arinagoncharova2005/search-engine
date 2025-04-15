@@ -3,7 +3,6 @@ import sys
 from cassandra.cluster import Cluster
 
 cluster = Cluster(['cassandra-server'])
-# TO DO add smth???
 session = cluster.connect()
 
 session.execute("""
@@ -12,6 +11,12 @@ session.execute("""
 """)
 
 session.execute('USE search_engine')
+
+# drop tables if they exist
+session.execute("DROP TABLE IF EXISTS term_freq;")
+session.execute("DROP TABLE IF EXISTS term_doc_freq;")
+session.execute("DROP TABLE IF EXISTS doc_length;")
+session.execute("DROP TABLE IF EXISTS general_stats;")
 
 # create term_freq table
 session.execute("""
@@ -49,9 +54,9 @@ session.execute("""
 term_freq = {}
 term_doc_freq = {}
 doc_length = {}
-# num_of_documents = 0
 already_processed_documents = set()
 
+# processing data from mapper
 for line in sys.stdin:
     print(line)
     word, document_id  = line.split('\t', 1)
@@ -113,7 +118,7 @@ session.execute("""
     VALUES ('avg_doc_length', %s);
 """, (avg_doc_length,))
 
-# check
+# checking tables in Cassandra 
 # select data from term_freq
 rows = session.execute('SELECT * FROM term_freq LIMIT 5')
 for row in rows:

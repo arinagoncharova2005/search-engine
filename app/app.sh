@@ -27,4 +27,5 @@ bash index.sh
 # Run the ranker
 bash search.sh "this is a query!"
 
+# added to run commands in master terminal after termination
 sleep 10000000000000000000
