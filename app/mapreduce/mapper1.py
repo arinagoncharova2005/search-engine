@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import re
 import sys
 
@@ -15,11 +15,11 @@ for line in sys.stdin:
         parts = line.split('\t', 2)
         document_id, doc_title, doc_text = parts
         
-        tokenized_title = tokenize_text(doc_title)
+        # tokenized_title = tokenize_text(doc_title)
         tokenized_text = tokenize_text(doc_text)
         
         for word in tokenized_text:
-            print(f'{word}\t{document_id}')
+            print(f'{word}\t{document_id}\t{doc_title}')
                 
     except Exception as e:
         print(f"Error in mapper1.py: {e}")

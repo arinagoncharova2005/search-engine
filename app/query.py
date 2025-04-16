@@ -74,13 +74,25 @@ term_doc_freq = spark.read \
         .collectAsMap()
 
 # get doc_length
-doc_length = spark.read \
+# doc_length = spark.read \
+#         .format("org.apache.spark.sql.cassandra") \
+#         .options(table="doc_length", keyspace="search_engine") \
+#         .load() \
+#         .rdd \
+#         .map(lambda row: (row.document_id, row.document_length)) \
+#         .collectAsMap()
+
+doc_info = spark.read \
         .format("org.apache.spark.sql.cassandra") \
         .options(table="doc_length", keyspace="search_engine") \
         .load() \
         .rdd \
-        .map(lambda row: (row.document_id, row.document_length)) \
-        .collectAsMap()
+        .collect()
+
+
+doc_length_dict = {row.document_id: row.document_length for row in doc_info}
+doc_titles_dict = {row.document_id: row.document_title for row in doc_info if hasattr(row, 'document_title')}
+
 
 general_stats = spark.read \
         .format("org.apache.spark.sql.cassandra") \
@@ -105,13 +117,13 @@ print("Relevant documents:")
 print(relevant_docs)
 # process relevant documents using Spark
 relevant_document_ids_rdd = sc.parallelize(list(relevant_docs))
-relevant_document_metrics = relevant_document_ids_rdd.map(lambda document_id: (document_id, compute_BM25(N, avg_dl, tokenized_query, term_freq, term_doc_freq, doc_length, document_id)))
+relevant_document_metrics = relevant_document_ids_rdd.map(lambda document_id: (document_id, compute_BM25(N, avg_dl, tokenized_query, term_freq, term_doc_freq, doc_length_dict, document_id)))
 relevant_documents = relevant_document_metrics.sortBy(lambda x: x[1], ascending=False).take(10)
 
 print("Found 10 relevant documents:")
 
 for document_id, score in relevant_documents:
-    print(f"Document ID: {document_id}, score: {score}")
+    print(f"Document id: {document_id}, title: {doc_titles_dict.get(document_id, 'not stated')},  score: {score}")
 
 # store the result in hdfs
 result_path = "/tmp/index/top_10"

@@ -1,6 +1,22 @@
-hello	document1.txt
-world	document1.txt
-hello	document2.txt
-example	document1.txt
-test	document3.txt
-hello	document3.txt
+at	1	Domestic_Cat_Overview
+mammal	1	Domestic_Cat_Overview
+small	1	Domestic_Cat_Overview
+carnivorous	1	Domestic_Cat_Overview
+domestic	1	Domestic_Cat_Overview
+house	1	Domestic_Cat_Overview
+pet	1	Domestic_Cat_Overview
+meowing	2	Cat_Behavior
+purring	2	Cat_Behavior
+hissing	2	Cat_Behavior
+communication	2	Cat_Behavior
+cat	2	Cat_Behavior
+behavior	2	Cat_Behavior
+bengal	3	Popular_Cat_Breeds
+siamese	3	Popular_Cat_Breeds
+persian	3	Popular_Cat_Breeds
+maine	3	Popular_Cat_Breeds
+coon	3	Popular_Cat_Breeds
+ragdoll	3	Popular_Cat_Breeds
+cat	3	Popular_Cat_Breeds
+breed	3	Popular_Cat_Breeds
+popular	3	Popular_Cat_Breeds

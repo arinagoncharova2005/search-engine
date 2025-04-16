@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import sys
 from cassandra.cluster import Cluster
 
@@ -39,7 +39,8 @@ session.execute("""
 session.execute("""
     CREATE TABLE IF NOT EXISTS doc_length (
         document_id TEXT PRIMARY KEY,
-        document_length INT
+        document_length INT,
+        document_title TEXT
     );
 """)
 
@@ -54,12 +55,13 @@ session.execute("""
 term_freq = {}
 term_doc_freq = {}
 doc_length = {}
+doc_titles = {}
 already_processed_documents = set()
 
 # processing data from mapper
 for line in sys.stdin:
-    print(line)
-    word, document_id  = line.split('\t', 1)
+    # print(line)
+    word, document_id, document_title  = line.split('\t')
     word = word.strip()
     if word in term_freq:
         term_freq[word] += 1
@@ -74,8 +76,10 @@ for line in sys.stdin:
 
     if document_id in doc_length:
         doc_length[document_id] += 1
+        
     else:
         doc_length[document_id] = 1
+    doc_titles[document_id] = document_title
 
     already_processed_documents.add(document_id)
 
@@ -98,10 +102,11 @@ for word, document_id_freq in term_doc_freq.items():
 
 print('Insering into doc_length table')
 for document_id, document_length in doc_length.items():
+    cur_document_title = doc_titles.get(document_id, "")
     session.execute("""
-        INSERT INTO doc_length (document_id, document_length)
-        VALUES (%s, %s);
-    """, (document_id, document_length))
+        INSERT INTO doc_length (document_id, document_length, document_title)
+        VALUES (%s, %s, %s);
+    """, (document_id, document_length, cur_document_title))
 
 num_of_documents = len(already_processed_documents)
 avg_doc_length = sum(doc_length.values()) / num_of_documents
