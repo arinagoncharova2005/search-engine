@@ -22,7 +22,7 @@ def compute_BM25(total_num_of_documents, dl_avg, q_words, term_freq_dict, term_d
         if word in term_freq_dict:
             df_t = len(term_doc_freq_dict[word])
             if document_id in term_doc_freq_dict[word]:
-                tf_t_d = term_freq_dict[word][document_id]
+                tf_t_d = term_doc_freq_dict[word][document_id]
             else:
                 tf_t_d = 0
         else:
@@ -59,7 +59,7 @@ term_freq = spark.read \
         .load() \
         .filter(term_condition) \
         .rdd \
-        .map(lambda row: {row.term, row.term_freq}) \
+        .map(lambda row: (row.term, row.term_freq)) \
         .collectAsMap()
 
 # get term_doc_freq
